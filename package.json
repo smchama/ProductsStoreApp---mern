@@ -24,13 +24,13 @@
     "helmet": "^8.1.0",
     "mongoose": "^8.18.0",
     "multer": "^2.0.2",
-    "sql": "^0.78.0"
+    "sql": "^0.78.0",
+    "cross-env": "^10.0.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.3",
     "browser-sync": "^3.0.4",
     "concurrently": "^9.2.1",
-    "cross-env": "^10.0.0",
     "nodemon": "^3.1.10"
   }
 }
