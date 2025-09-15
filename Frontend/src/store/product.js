@@ -1,7 +1,7 @@
 // src/store/product.js
 import { create } from "zustand";
 
-const API_URL = import.meta.env.VITE_API_URL; // Read the backend URL
+const API_URL = import.meta.env.VITE_API_URL; // Backend root URL
 
 const useProductStore = create((set) => ({
   products: [],
@@ -14,7 +14,7 @@ const useProductStore = create((set) => ({
   fetchProducts: async () => {
     set({ loading: true });
     try {
-      const res = await fetch(`${API_URL}/products`);
+      const res = await fetch(`${API_URL}/api/products`);
       const data = await res.json();
 
       if (res.ok) {
@@ -36,7 +36,7 @@ const useProductStore = create((set) => ({
     }
 
     try {
-      const res = await fetch(`${API_URL}/products`, {
+      const res = await fetch(`${API_URL}/api/products`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newProduct),
@@ -63,7 +63,7 @@ const useProductStore = create((set) => ({
     }
 
     try {
-      const res = await fetch(`${API_URL}/products/${id}`, {
+      const res = await fetch(`${API_URL}/api/products/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedProduct),
@@ -76,7 +76,9 @@ const useProductStore = create((set) => ({
       }
 
       set((state) => ({
-        products: state.products.map((p) => (p._id === id || p.id === id ? data.data : p)),
+        products: state.products.map((p) =>
+          p._id === id || p.id === id ? data.data : p
+        ),
       }));
 
       return { success: true, message: "Product updated successfully" };
@@ -89,7 +91,7 @@ const useProductStore = create((set) => ({
   // Delete product
   deleteProduct: async (pid) => {
     try {
-      const res = await fetch(`${API_URL}/products/${pid}`, {
+      const res = await fetch(`${API_URL}/api/products/${pid}`, {
         method: "DELETE",
       });
 
