@@ -8,7 +8,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon server.js",
-    "start": "node backend/server.js",
+    "start": "node server.js",
     "server": "nodemon backend/server.js",
     "client": "npm start --prefix Frontend",
     "build": "cd Frontend && npm install && npm run build",
