@@ -6,6 +6,7 @@ import productRoute from "./routes/product.route.js";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 import helmet from "helmet";
+import cors from "cors"; // ✅ Import cors
 import { devCSP, prodCSP } from "./config/cspConfig.js"; // ✅ CSP rules
 
 // Load env vars
@@ -21,6 +22,15 @@ const __dirname = dirname(__filename);
 // Middleware
 app.use(express.json());
 
+// ✅ Enable CORS
+app.use(
+  cors({
+    origin: "https://products-frontend-1.onrender.com", // frontend URL
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
+
 // Helmet with external CSP config
 const cspConfig = process.env.NODE_ENV === "production" ? prodCSP : devCSP;
 app.use(
@@ -33,10 +43,10 @@ app.use(
 // Connect to MongoDB
 connectDB();
 
-// ✅API routes
+// ✅ API routes
 app.use("/api/products", productRoute);
 
-// Serve frontend in production
+// Serve frontend in production (optional since frontend is deployed separately)
 if (process.env.NODE_ENV === "production") {
   const frontendDist = path.join(__dirname, "../frontend/dist");
   console.log("Serving frontend from:", frontendDist);
