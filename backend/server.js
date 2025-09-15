@@ -38,7 +38,7 @@ app.use("/api/products", productRoute);
 
 // Serve frontend in production
 if (process.env.NODE_ENV === "production") {
-  const frontendDist = path.join(__dirname, "../Frontend/dist");
+  const frontendDist = path.join(__dirname, "../frontend/dist");
   console.log("Serving frontend from:", frontendDist);
 
   app.use(express.static(frontendDist));

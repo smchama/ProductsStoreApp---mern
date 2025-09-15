@@ -1,18 +1,20 @@
 // src/store/product.js
 import { create } from "zustand";
 
+const API_URL = import.meta.env.VITE_API_URL; // Read the backend URL
+
 const useProductStore = create((set) => ({
   products: [],
   loading: false,
 
-  // set all products
+  // Set all products
   setProducts: (products) => set({ products }),
 
-  // fetch products
+  // Fetch all products
   fetchProducts: async () => {
     set({ loading: true });
     try {
-      const res = await fetch("/api/products");
+      const res = await fetch(`${API_URL}/products`);
       const data = await res.json();
 
       if (res.ok) {
@@ -27,14 +29,14 @@ const useProductStore = create((set) => ({
     }
   },
 
-  // create product
+  // Create product
   createProduct: async (newProduct) => {
     if (!newProduct.name || !newProduct.image || !newProduct.price) {
       return { success: false, message: "Please fill all the fields" };
     }
 
     try {
-      const res = await fetch("/api/products", {
+      const res = await fetch(`${API_URL}/products`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newProduct),
@@ -54,14 +56,14 @@ const useProductStore = create((set) => ({
     }
   },
 
-  // update product
+  // Update product
   updateProduct: async (id, updatedProduct) => {
     if (!updatedProduct.name || !updatedProduct.image || !updatedProduct.price) {
       return { success: false, message: "Please fill all the fields" };
     }
 
     try {
-      const res = await fetch(`/api/products/${id}`, {
+      const res = await fetch(`${API_URL}/products/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedProduct),
@@ -73,11 +75,8 @@ const useProductStore = create((set) => ({
         return { success: false, message: data.message || "Failed to update product" };
       }
 
-      // update the product in the store immediately
       set((state) => ({
-        products: state.products.map((p) =>
-          p._id === id || p.id === id ? data.data : p
-        ),
+        products: state.products.map((p) => (p._id === id || p.id === id ? data.data : p)),
       }));
 
       return { success: true, message: "Product updated successfully" };
@@ -87,10 +86,10 @@ const useProductStore = create((set) => ({
     }
   },
 
-  // delete product
+  // Delete product
   deleteProduct: async (pid) => {
     try {
-      const res = await fetch(`/api/products/${pid}`, {
+      const res = await fetch(`${API_URL}/products/${pid}`, {
         method: "DELETE",
       });
 
@@ -100,7 +99,6 @@ const useProductStore = create((set) => ({
         return { success: false, message: data.message || "Failed to delete product" };
       }
 
-      // remove product from store immediately
       set((state) => ({
         products: state.products.filter((p) => p._id !== pid && p.id !== pid),
       }));
