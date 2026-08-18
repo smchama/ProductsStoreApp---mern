@@ -32,7 +32,7 @@ const Navbar = () => {
           bgClip="text"
         >
           <NavLink to="/" style={{ textDecoration: "none" }}>
-            Product Store
+            Chamza Products Store
           </NavLink>
         </Text>
 
