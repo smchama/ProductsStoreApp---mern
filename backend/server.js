@@ -1,31 +1,38 @@
 // backend/server.js
 import dotenv from "dotenv";
-import express from "express";
-import connectDB from "./config/db.js";
-import productRoute from "./routes/product.route.js";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
+
+// ✅ Correctly get __dirname first so we can point to the parent folder
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// ✅ Explicitly point dotenv to the .env file in the parent folder
+dotenv.config({ path: path.join(__dirname, "../.env") });
+
+import express from "express";
+import connectDB from "./config/db.js";
+import authRoutes from "./routes/auth.route.js"; // 👈 Fixed import path
+import productRoute from "./routes/product.route.js";
+import orderRoutes from "./routes/order.route.js";
 import helmet from "helmet";
+
 import cors from "cors"; // ✅ Import cors
 import { devCSP, prodCSP } from "./config/cspConfig.js"; // ✅ CSP rules
-
-// Load env vars
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Correct way to get __dirname in ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
 // Middleware
 app.use(express.json());
 
-// ✅ Enable CORS
+// ✅ Enable CORS for both live and local frontends
 app.use(
   cors({
-    origin: "https://products-frontend-1.onrender.com", // frontend URL
+    origin: [
+      "https://products-frontend-1.onrender.com", 
+      "http://localhost:5173"
+    ], 
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
@@ -45,18 +52,27 @@ connectDB();
 
 // ✅ API routes
 app.use("/api/products", productRoute);
+app.use("/api/orders", orderRoutes);
+app.use("/api/auth", authRoutes);
 
-// Serve frontend in production (optional since frontend is deployed separately)
-if (process.env.NODE_ENV === "production") {
-  const frontendDist = path.join(__dirname, "../frontend/dist");
-  console.log("Serving frontend from:", frontendDist);
+/* 
+  COMMENT OUT OR REMOVE FRONTEND SERVING FOR BACKEND-ONLY DEPLOYMENT
+  -----------------------------------------------------------------
+  This section is only needed if your backend serves the frontend.
+  Since this is a backend-only repo, remove or comment it out
+  to avoid "ENOENT: no such file or directory" errors on Render.
+*/
 
-  app.use(express.static(frontendDist));
+// if (process.env.NODE_ENV === "production") {
+//   const frontendDist = path.join(__dirname, "../frontend/dist");
+//   console.log("Serving frontend from:", frontendDist);
 
-  app.get("/*", (req, res) => {
-    res.sendFile(path.resolve(frontendDist, "index.html"));
-  });
-}
+//   app.use(express.static(frontendDist));
+
+//   app.get("/*", (req, res) => {
+//     res.sendFile(path.resolve(frontendDist, "index.html"));
+//   });
+// }
 
 // Start server
 app.listen(PORT, () => {

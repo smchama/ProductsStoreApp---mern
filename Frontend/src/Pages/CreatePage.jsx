@@ -1,3 +1,4 @@
+// src/pages/CreatePage.jsx
 import { useState } from "react";
 import {
   Box,
@@ -7,25 +8,26 @@ import {
   useColorModeValue,
   VStack,
   Input,
-  useToast,   // import Chakra toast
+  Select,
+  useToast,
 } from "@chakra-ui/react";
-import useProductStore from "../store/product.js"; // default import
+import useProductStore from "../store/product.js";
 
 const CreatePage = () => {
   const [newProduct, setNewProduct] = useState({
     name: "",
     price: "",
     image: "",
+    category: "", // Added category to initial state
   });
 
-  const { createProduct } = useProductStore(); // get store action
-  const toast = useToast(); // initialize toast
+  const { createProduct } = useProductStore();
+  const toast = useToast();
 
   const handleAddProduct = async () => {
-    const result = await createProduct(newProduct); // call zustand store
+    const result = await createProduct(newProduct);
 
     if (result.success) {
-      // show success toast
       toast({
         title: "Product Created",
         description: result.message,
@@ -34,10 +36,9 @@ const CreatePage = () => {
         isClosable: true,
       });
 
-      // clear form after success
-      setNewProduct({ name: "", price: "", image: "" });
+      // Clear form after success
+      setNewProduct({ name: "", price: "", image: "", category: "" });
     } else {
-      // show error toast
       toast({
         title: "Error",
         description: result.message,
@@ -49,9 +50,9 @@ const CreatePage = () => {
   };
 
   return (
-    <Container maxW="container.sm">
+    <Container maxW="container.sm" py={12}>
       <VStack spacing={8}>
-        <Heading as="h1" size="2xl" textAlign="center" mb={8}>
+        <Heading as="h1" size="2xl" textAlign="center" mb={2}>
           Create New Product
         </Heading>
 
@@ -90,6 +91,27 @@ const CreatePage = () => {
                 setNewProduct({ ...newProduct, image: e.target.value })
               }
             />
+
+            {/* Category Dropdown Selection */}
+            <Select
+              placeholder="Select Category"
+              value={newProduct.category}
+              onChange={(e) =>
+                setNewProduct({ ...newProduct, category: e.target.value })
+              }
+            >
+              <option value="electronics">Electronics</option>
+              <option value="watches">Watches</option>
+              <option value="accessories">Accessories</option>
+              <option value="clothing">Clothing</option>
+             <option value="groceries">Groceries</option>
+             <option value="cosmetics">Cosmetics</option>
+             <option value="footware">Footware</option>
+             <option value="bags-wallets">Bags-Wallets</option>
+             <option value="home goods">Home Goods</option>
+            
+              {/* You can add more categories here as needed */}
+            </Select>
 
             <Button colorScheme="blue" onClick={handleAddProduct} w="full">
               Add Product

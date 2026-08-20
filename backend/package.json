@@ -1,6 +1,6 @@
 {
   "engines": {
-    "node": "20.x"
+    "node": "22.x"
   },
   "name": "mern",
   "version": "1.0.0",
@@ -9,20 +9,19 @@
   "scripts": {
     "dev": "nodemon server.js",
     "start": "node server.js",
-    "server": "nodemon backend/server.js",
-    "client": "npm start --prefixfrontend",
-    "build": "cd frontend && npm install && npm run build",
-    "prod": "npx cross-env NODE_ENV=production node backend/server.js"
+    "prod": "cross-env NODE_ENV=production node server.js"
   },
   "type": "module",
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "cross-env": "^10.0.0",
     "dotenv": "^17.2.2",
     "express": "^4.21.2",
     "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.3",
     "mongoose": "^8.18.0",
     "multer": "^2.0.2",
     "sql": "^0.78.0"
