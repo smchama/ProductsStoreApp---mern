@@ -1,7 +1,7 @@
 // src/store/auth.js
 import { create } from "zustand";
 
-const API_URL = import.meta.env.VITE_API_URL || "";
+const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.MODE === "development" ? "http://localhost:5000" : "");
 
 const useAuthStore = create((set) => ({
   user: JSON.parse(localStorage.getItem("userInfo")) || null,

@@ -10,8 +10,16 @@ export const createOrder = async (req, res) => {
   }
 
   try {
+    // Safely extract the user ID regardless of how the token payload encodes it
+    const userId = req.user._id || req.user.id || req.user.userId || req.user._doc?._id;
+
+    if (!userId) {
+      console.error("Auth Error: req.user object received is:", req.user);
+      return res.status(401).json({ success: false, message: "Not authorized, user ID could not be determined from token." });
+    }
+
     const newOrder = new Order({
-      user: req.user._id || req.user.id, // Attached by your 'protect' middleware
+      user: userId, // Attached by your 'protect' middleware
       fullName,
       address,
       city,
@@ -30,14 +38,14 @@ export const createOrder = async (req, res) => {
     });
   } catch (error) {
     console.error("Error creating order:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json({ success: false, message: `Server Error: ${error.message}` });
   }
 };
 
 // --- GET LOGGED-IN USER'S ORDERS (WITH LEGACY FALLBACK) ---
 export const getMyOrders = async (req, res) => {
   try {
-    const userId = req.user._id || req.user.id;
+    const userId = req.user._id || req.user.id || req.user.userId || req.user._doc?._id;
     
     // Fetch orders belonging to this user OR legacy orders with no user field
     const orders = await Order.find({

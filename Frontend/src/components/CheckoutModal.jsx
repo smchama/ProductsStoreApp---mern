@@ -55,6 +55,13 @@ const CheckoutModal = ({ isOpen, onClose, totalAmount }) => {
     setIsSubmitting(true);
 
     try {
+      // 1. Retrieve the authentication token from localStorage
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        throw new Error("You must be logged in to place an order.");
+      }
+
       const orderPayload = {
         fullName: formData.fullName,
         address: formData.address,
@@ -70,9 +77,13 @@ const CheckoutModal = ({ isOpen, onClose, totalAmount }) => {
         totalAmount: totalAmount,
       };
 
+      // 2. Pass the token in the Authorization header
       const res = await fetch(`${API_URL}/api/orders`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
         body: JSON.stringify(orderPayload),
       });
 
