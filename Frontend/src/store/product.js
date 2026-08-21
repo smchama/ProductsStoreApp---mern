@@ -1,7 +1,7 @@
 // src/store/product.js
 import { create } from "zustand";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000"; // 👈 Fixed fallback URL
+const API_URL = import.meta.env.VITE_API_URL || "https://products-store-app-mern-sltb.vercel.app"; // 👈 Fixed fallback URL
 
 const useProductStore = create((set, get) => ({
   products: [],
