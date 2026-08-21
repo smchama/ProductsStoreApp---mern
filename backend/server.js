@@ -73,10 +73,16 @@ app.use("/api/auth", authRoutes);
 //     res.sendFile(path.resolve(frontendDist, "index.html"));
 //   });
 // }
+//
 
-// Start server
-app.listen(PORT, () => {
-  console.log(
-    `🚀 Server running in ${process.env.NODE_ENV || "development"} mode at http://localhost:${PORT}`
-  );
-});
+// Start server locally (ignored on Vercel serverless)
+if (process.env.NODE_ENV !== "production") {
+  app.listen(PORT, () => {
+    console.log(
+      `🚀 Server running in development mode at http://localhost:${PORT}`
+    );
+  });
+}
+
+// ✅ Export the app for Vercel serverless deployment
+export default app;
