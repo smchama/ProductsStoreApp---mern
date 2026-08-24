@@ -20,7 +20,8 @@ import {
 } from "@chakra-ui/react";
 import useCartStore from "../store/cart.js";
 
-const API_URL = import.meta.env.VITE_API_URL || "";
+// ✅ Point directly to your live Render backend if VITE_API_URL is missing
+const API_URL = import.meta.env.VITE_API_URL || "https://products-backend-7.onrender.com";
 
 const CheckoutModal = ({ isOpen, onClose, totalAmount }) => {
   const { cart, clearCart } = useCartStore();
@@ -77,7 +78,7 @@ const CheckoutModal = ({ isOpen, onClose, totalAmount }) => {
         totalAmount: totalAmount,
       };
 
-      // 2. Pass the token in the Authorization header
+      // 2. Pass the token and full live URL in the Authorization request
       const res = await fetch(`${API_URL}/api/orders`, {
         method: "POST",
         headers: {
