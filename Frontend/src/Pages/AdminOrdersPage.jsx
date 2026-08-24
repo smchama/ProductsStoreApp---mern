@@ -26,7 +26,8 @@ import {
 import { FiSearch } from "react-icons/fi";
 import useAuthStore from "../store/auth.js";
 
-const API_URL = "http://localhost:5000";
+// ✅ Automatically use live Render backend URL or local fallback
+const API_URL = import.meta.env.VITE_API_URL || "https://products-backend-7.onrender.com";
 
 const AdminOrdersPage = () => {
   const [orders, setOrders] = useState([]);
@@ -34,14 +35,15 @@ const AdminOrdersPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const cardBg = useColorModeValue("white", "gray.800");
 
-  // Grab both user and token correctly from Zustand store
-  const { token } = useAuthStore();
+  // ✅ Grab token from Zustand store with a fallback directly to localStorage
+  const { token: storeToken } = useAuthStore();
+  const token = storeToken || localStorage.getItem("token");
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         if (!token) {
-          console.error("No token found in auth store");
+          console.error("No token found in auth store or localStorage");
           setLoading(false);
           return;
         }
