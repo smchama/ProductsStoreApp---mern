@@ -56,8 +56,11 @@ const CheckoutModal = ({ isOpen, onClose, totalAmount }) => {
     setIsSubmitting(true);
 
     try {
-      // 1. Retrieve the authentication token from localStorage
+      // 1. Retrieve the authentication token from localStorage securely
       const token = localStorage.getItem("token");
+
+      // Debug check to inspect live storage in browser console
+      console.log("CheckoutModal token check:", token ? "Token exists" : "No token found");
 
       if (!token) {
         throw new Error("You must be logged in to place an order.");
@@ -106,7 +109,7 @@ const CheckoutModal = ({ isOpen, onClose, totalAmount }) => {
       onClose();
       setFormData({ fullName: "", address: "", city: "", paymentMethod: "cod" });
     } catch (error) {
-      console.error(error);
+      console.error("Checkout error caught:", error);
       toast({
         title: "Checkout Error",
         description: error.message || "Something went wrong.",
@@ -123,7 +126,7 @@ const CheckoutModal = ({ isOpen, onClose, totalAmount }) => {
     <Modal isOpen={isOpen} onClose={onClose} size="lg" isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Checkout & Shipping</ModalHeader>
+        <ModalHeader>Checkout & Shipping (Secure)</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <VStack as="form" onSubmit={handleCheckoutSubmit} spacing={4} align="stretch">
