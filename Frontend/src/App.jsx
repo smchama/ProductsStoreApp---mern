@@ -1,10 +1,10 @@
-// src/App.jsx
+// src/App.jsx - Cache Buster Update 2026
 import { Box } from "@chakra-ui/react";
 import { Route, Routes } from "react-router-dom";
 
 import HomePage from "./Pages/HomePage.jsx";
 import CreatePage from "./Pages/CreatePage.jsx";
-import ProductDetailsPage from "./Pages/ProductDetailsPage.jsx"; // 👈 Uncomment import
+import ProductDetailsPage from "./Pages/ProductDetailsPage.jsx";
 import Navbar from "./components/Navbar.jsx";
 import Footer from "./components/Footer.jsx";
 import AdminOrdersPage from "./Pages/AdminOrdersPage.jsx";
@@ -19,7 +19,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/create" element={<CreatePage />} />
-          <Route path="/product/:id" element={<ProductDetailsPage />} /> {/* 👈 Enabled route */}
+          <Route path="/product/:id" element={<ProductDetailsPage />} />
 
           {/* Protected Admin Orders Route */}
           <Route
