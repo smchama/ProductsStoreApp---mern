@@ -20,7 +20,7 @@ import {
 import { AddIcon, MinusIcon, DeleteIcon } from "@chakra-ui/icons";
 import useCartStore from "../store/cart.js";
 import SecureCheckoutModal from "./SecureCheckoutModal";
-//import CheckoutModal from "./CheckoutModal.jsx"; // 👈 Import checkout modal
+
 
 const CartDrawer = ({ isOpen, onClose }) => {
   const { cart, updateQuantity, removeFromCart, clearCart } = useCartStore();
@@ -132,7 +132,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
       </Drawer>
 
       {/* Render Checkout Modal */}
-      <CheckoutModal
+      <SecureCheckoutModal
         isOpen={isCheckoutOpen}
         onClose={() => setIsCheckoutOpen(false)}
         totalAmount={totalPrice}
