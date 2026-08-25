@@ -25,7 +25,7 @@ import useCartStore from "../store/cart.js";
 // ✅ Point directly to your live Render backend if VITE_API_URL is missing
 const API_URL = import.meta.env.VITE_API_URL || "https://products-backend-7.onrender.com";
 
-const CheckoutModal = ({ isOpen, onClose, totalAmount }) => {
+const SecureCheckoutModal = ({ isOpen, onClose, totalAmount }) => {
   const { cart, clearCart } = useCartStore();
   const toast = useToast();
 
@@ -206,4 +206,4 @@ const CheckoutModal = ({ isOpen, onClose, totalAmount }) => {
   );
 };
 
-export default CheckoutModal;
+export default SecureCheckoutModal;
