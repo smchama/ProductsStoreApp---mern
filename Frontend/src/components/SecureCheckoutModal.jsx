@@ -1,3 +1,5 @@
+// Force update token payload - August 2026
+
 // src/components/CheckoutModal.jsx
 import React, { useState } from "react";
 import {
@@ -46,7 +48,7 @@ const CheckoutModal = ({ isOpen, onClose, totalAmount }) => {
       toast({
         title: "Missing fields",
         description: "Please fill in all shipping details.",
-        status: "error",
+        status: "error", 
         duration: 3000,
         isClosable: true,
       });
