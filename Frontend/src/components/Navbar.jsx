@@ -1,109 +1,194 @@
 // src/components/Navbar.jsx
 import React, { useState } from "react";
 import {
-  Box,
+  Container,
   Flex,
-  Button,
-  HStack,
   Text,
-  useColorMode,
-  useColorModeValue,
+  HStack,
+  Button,
   IconButton,
+  useColorMode,
+  Box,
+  Badge,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Avatar,
 } from "@chakra-ui/react";
-import { SunIcon, MoonIcon } from "@chakra-ui/icons";
-import { Link, useNavigate } from "react-router-dom";
+import { NavLink, Link as RouterLink } from "react-router-dom";
+import { FiPlusSquare, FiSun, FiMoon, FiShoppingCart, FiUser, FiPackage } from "react-icons/fi";
 import useCartStore from "../store/cart.js";
-import CartDrawer from "./CartDrawer";
-import MyOrdersModal from "./MyOrdersModal"; // 👈 1. Import your tracking modal
+import useAuthStore from "../store/auth.js";
+import CartDrawer from "./CartDrawer.jsx";
+import AuthModal from "./AuthModal.jsx";
+import MyOrdersModal from "./MyOrdersModal.jsx"; // 👈 Added tracking modal
 
 const Navbar = () => {
   const { colorMode, toggleColorMode } = useColorMode();
-  const { cart } = useCartStore();
-  const navigate = useNavigate();
-
-  // State for Cart Drawer and My Orders Modal
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isOrdersOpen, setIsOrdersOpen] = useState(false); // 👈 2. State for Orders modal
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isOrdersOpen, setIsOrdersOpen] = useState(false); // 👈 State for My Orders Modal
+  
+  const cart = useCartStore((state) => state.cart);
+  const { user, logout } = useAuthStore();
 
-  // Check if user is logged in (e.g., checking for token in localStorage)
-  const token = localStorage.getItem("token");
-  const userRole = localStorage.getItem("role"); // optional if you store user role
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    navigate("/login");
-  };
-
-  const totalCartItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+  // Calculate total item count for the badge
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <Box bg={useColorModeValue("white", "gray.900")} px={4} borderBottomWidth="1px" boxShadow="sm">
-      <Flex h={16} alignItems="center" justifyContent="between" maxW="container.xl" mx="auto">
-        
-        {/* Brand / Logo */}
+    <Container maxW="1140px" px={4}>
+      <Flex
+        py={{ base: 3, md: 4 }}
+        alignItems="center"
+        justifyContent="space-between"
+        flexDir={{ base: "column", md: "row" }}
+        gap={{ base: 3, md: 0 }}
+      >
+        {/* Logo / Title */}
         <Text
-          fontSize={{ base: "lg", md: "xl" }}
+          fontSize={{ base: "20px", sm: "24px", md: "28px" }}
           fontWeight="bold"
-          cursor="pointer"
-          onClick={() => navigate("/")}
+          textTransform="uppercase"
+          textAlign="center"
+          bgGradient="linear(to-r, cyan.400, blue.500)"
+          bgClip="text"
         >
-          🛍️ MyStore
+          <NavLink to="/" style={{ textDecoration: "none" }}>
+            Chamza Products Store
+          </NavLink>
         </Text>
 
-        {/* Navigation Actions */}
-        <HStack spacing={4}>
-          {/* Dark / Light mode toggle */}
+        {/* Navigation Links + Buttons */}
+        <HStack 
+          spacing={{ base: 2, sm: 4 }} 
+          alignItems="center" 
+          flexWrap="wrap" 
+          justifyContent="center"
+        >
+          <NavLink
+            to="/"
+            style={({ isActive }) => ({
+              fontWeight: isActive ? "bold" : "normal",
+              color: isActive ? "dodgerblue" : (colorMode === "dark" ? "white" : "black"),
+              textDecoration: "none",
+              fontSize: "14px",
+            })}
+          >
+            Home
+          </NavLink>
+
+          {/* Create Product Button - Admin Only */}
+          {user?.role === "admin" && (
+            <NavLink to="/create">
+              <Button
+                leftIcon={<FiPlusSquare />}
+                colorScheme="blue"
+                size="sm"
+              >
+                Create
+              </Button>
+            </NavLink>
+          )}
+
+          {/* My Orders Button - Logged in Customers */}
+          {user && (
+            <Button
+              leftIcon={<FiPackage />}
+              colorScheme="teal"
+              variant="outline"
+              size="sm"
+              onClick={() => setIsOrdersOpen(true)}
+            >
+              My Orders
+            </Button>
+          )}
+
+          {/* Shopping Cart Button with Badge */}
+          <Box position="relative">
+            <Button
+              leftIcon={<FiShoppingCart />}
+              colorScheme="teal"
+              size="sm"
+              onClick={() => setIsCartOpen(true)}
+            >
+              Cart
+            </Button>
+            {totalItems > 0 && (
+              <Badge
+                colorScheme="red"
+                rounded="full"
+                position="absolute"
+                top="-2"
+                right="-2"
+                px={2}
+                fontSize="xs"
+              >
+                {totalItems}
+              </Badge>
+            )}
+          </Box>
+
+          {/* User Authentication Menu / Button */}
+          {user ? (
+            <Menu>
+              <MenuButton
+                as={Button}
+                rounded={"full"}
+                variant={"link"}
+                cursor={"pointer"}
+                minW={0}
+              >
+                <HStack spacing={1}>
+                  <Avatar size={"sm"} name={user.name} />
+                </HStack>
+              </MenuButton>
+              <MenuList>
+                <MenuItem isDisabled fontWeight="bold">
+                  {user.name}
+                </MenuItem>
+                {user.role === "admin" && (
+                  <MenuItem as={RouterLink} to={"/admin/orders"}>
+                    Admin Orders
+                  </MenuItem>
+                )}
+                <MenuItem onClick={logout} color="red.500">
+                  Log Out
+                </MenuItem>
+              </MenuList>
+            </Menu>
+          ) : (
+            <Button
+              leftIcon={<FiUser />}
+              colorScheme="blue"
+              variant="outline"
+              size="sm"
+              onClick={() => setIsAuthOpen(true)}
+            >
+              Sign In
+            </Button>
+          )}
+
+          {/* Toggle Light/Dark Mode Button */}
           <IconButton
             aria-label="Toggle color mode"
-            icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+            icon={colorMode === "light" ? <FiMoon /> : <FiSun />}
             onClick={toggleColorMode}
-            size="md"
-            variant="ghost"
+            size="sm"
+            colorScheme={colorMode === "light" ? "purple" : "orange"}
           />
-
-          {/* Cart Button */}
-          <Button onClick={() => setIsCartOpen(true)} colorScheme="blue" variant="outline" size="sm">
-            Cart ({totalCartItems})
-          </Button>
-
-          {/* Conditional Auth & Orders Links */}
-          {token ? (
-            <>
-              {/* 👈 3. My Orders Button for logged-in customers */}
-              <Button onClick={() => setIsOrdersOpen(true)} colorScheme="teal" variant="ghost" size="sm">
-                My Orders
-              </Button>
-
-              {userRole === "admin" && (
-                <Button as={Link} to="/admin" colorScheme="purple" size="sm">
-                  Admin Dashboard
-                </Button>
-              )}
-
-              <Button onClick={handleLogout} colorScheme="red" variant="solid" size="sm">
-                Logout
-              </Button>
-            </>
-          ) : (
-            <HStack spacing={2}>
-              <Button as={Link} to="/login" variant="ghost" size="sm">
-                Login
-              </Button>
-              <Button as={Link} to="/signup" colorScheme="blue" size="sm">
-                Sign Up
-              </Button>
-            </HStack>
-          )}
         </HStack>
       </Flex>
 
       {/* Cart Drawer Component */}
       <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
 
-      {/* 👈 4. Render My Orders Tracking Modal */}
+      {/* Auth Modal Component */}
+      <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
+
+      {/* My Orders Tracking Modal Component */}
       <MyOrdersModal isOpen={isOrdersOpen} onClose={() => setIsOrdersOpen(false)} />
-    </Box>
+    </Container>
   );
 };
 
