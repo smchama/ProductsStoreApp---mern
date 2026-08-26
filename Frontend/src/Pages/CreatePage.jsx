@@ -18,7 +18,7 @@ const CreatePage = () => {
     name: "",
     price: "",
     image: "",
-    category: "", // Added category to initial state
+    category: "",
   });
 
   const { createProduct } = useProductStore();
@@ -50,16 +50,16 @@ const CreatePage = () => {
   };
 
   return (
-    <Container maxW="container.sm" py={12}>
-      <VStack spacing={8}>
-        <Heading as="h1" size="2xl" textAlign="center" mb={2}>
+    <Container maxW="container.sm" py={{ base: 6, md: 12 }} px={{ base: 4, md: 8 }}>
+      <VStack spacing={6}>
+        <Heading as="h1" size={{ base: "xl", md: "2xl" }} textAlign="center" mb={2}>
           Create New Product
         </Heading>
 
         <Box
           w="full"
           bg={useColorModeValue("white", "gray.800")}
-          p={6}
+          p={{ base: 4, md: 6 }}
           rounded="lg"
           shadow="md"
         >
@@ -67,6 +67,7 @@ const CreatePage = () => {
             <Input
               placeholder="Product Name"
               name="name"
+              size="lg"
               value={newProduct.name}
               onChange={(e) =>
                 setNewProduct({ ...newProduct, name: e.target.value })
@@ -77,6 +78,7 @@ const CreatePage = () => {
               placeholder="Price"
               name="price"
               type="number"
+              size="lg"
               value={newProduct.price}
               onChange={(e) =>
                 setNewProduct({ ...newProduct, price: e.target.value })
@@ -86,6 +88,7 @@ const CreatePage = () => {
             <Input
               placeholder="Image URL"
               name="image"
+              size="lg"
               value={newProduct.image}
               onChange={(e) =>
                 setNewProduct({ ...newProduct, image: e.target.value })
@@ -95,6 +98,7 @@ const CreatePage = () => {
             {/* Category Dropdown Selection */}
             <Select
               placeholder="Select Category"
+              size="lg"
               value={newProduct.category}
               onChange={(e) =>
                 setNewProduct({ ...newProduct, category: e.target.value })
@@ -104,16 +108,14 @@ const CreatePage = () => {
               <option value="watches">Watches</option>
               <option value="accessories">Accessories</option>
               <option value="clothing">Clothing</option>
-             <option value="groceries">Groceries</option>
-             <option value="cosmetics">Cosmetics</option>
-             <option value="footware">Footware</option>
-             <option value="bags-wallets">Bags-Wallets</option>
-             <option value="home goods">Home Goods</option>
-            
-              {/* You can add more categories here as needed */}
+              <option value="groceries">Groceries</option>
+              <option value="cosmetics">Cosmetics</option>
+              <option value="footware">Footware</option>
+              <option value="bags-wallets">Bags-Wallets</option>
+              <option value="home goods">Home Goods</option>
             </Select>
 
-            <Button colorScheme="blue" onClick={handleAddProduct} w="full">
+            <Button colorScheme="blue" size="lg" onClick={handleAddProduct} w="full">
               Add Product
             </Button>
           </VStack>

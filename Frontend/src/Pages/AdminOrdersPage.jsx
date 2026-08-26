@@ -85,7 +85,7 @@ const AdminOrdersPage = () => {
   }
 
   return (
-    <Container maxW="container.xl" py={8}>
+    <Container maxW="container.xl" py={8} px={{ base: 4, md: 8 }}>
       <Stack
         direction={{ base: "column", md: "row" }}
         justify="space-between"
@@ -93,11 +93,11 @@ const AdminOrdersPage = () => {
         mb={6}
         spacing={4}
       >
-        <Heading size="lg">
+        <Heading size={{ base: "md", md: "lg" }}>
           Admin Dashboard: Customer Orders ({filteredOrders.length})
         </Heading>
 
-        <InputGroup maxW={{ base: "full", md: "350px" }}>
+        <InputGroup maxW={{ base: "full", md: "350px" }} size={{ base: "md", md: "lg" }}>
           <InputLeftElement pointerEvents="none">
             <FiSearch color="gray.300" />
           </InputLeftElement>
@@ -110,18 +110,20 @@ const AdminOrdersPage = () => {
       </Stack>
 
       {filteredOrders.length === 0 ? (
-        <Text color="gray.500">No matching orders found.</Text>
+        <Text color="gray.500" textAlign="center" py={10}>
+          No matching orders found.
+        </Text>
       ) : (
         <VStack spacing={6} align="stretch">
           {filteredOrders.map((order) => (
             <Card key={order._id} bg={cardBg} shadow="md" borderRadius="lg">
-              <CardBody>
-                <Stack direction={{ base: "column", md: "row" }} justify="space-between" mb={4}>
-                  <Box>
-                    <Text fontSize="sm" color="gray.500">
+              <CardBody p={{ base: 4, md: 6 }}>
+                <Stack direction={{ base: "column", sm: "row" }} justify="space-between" align={{ base: "flex-start", sm: "center" }} mb={4} spacing={2}>
+                  <Box overflow="hidden">
+                    <Text fontSize={{ base: "xs", md: "sm" }} color="gray.500" wordBreak="break-all">
                       Order ID: <span style={{ fontWeight: "bold" }}>{order._id}</span>
                     </Text>
-                    <Text fontSize="sm" color="gray.500">
+                    <Text fontSize={{ base: "xs", md: "sm" }} color="gray.500">
                       Placed on: {new Date(order.createdAt).toLocaleString()}
                     </Text>
                   </Box>
@@ -132,22 +134,22 @@ const AdminOrdersPage = () => {
                     borderRadius="md"
                     h="fit-content"
                   >
-                    {order.status}
+                    {order.status || "Pending"}
                   </Badge>
                 </Stack>
 
                 <Divider mb={4} />
 
-                <Stack direction={{ base: "column", md: "row" }} spacing={6} justify="space-between">
+                <Stack direction={{ base: "column", lg: "row" }} spacing={6} justify="space-between">
                   <Box flex="1">
-                    <Text fontWeight="bold" mb={1}>Customer Details:</Text>
-                    <Text>Name: {order.fullName}</Text>
-                    <Text>Address: {order.address}, {order.city}</Text>
-                    <Text>Payment Method: {order.paymentMethod?.toUpperCase()}</Text>
+                    <Text fontWeight="bold" mb={1} fontSize="md">Customer Details:</Text>
+                    <Text fontSize="sm">Name: {order.fullName}</Text>
+                    <Text fontSize="sm">Address: {order.address}, {order.city}</Text>
+                    <Text fontSize="sm">Payment Method: {order.paymentMethod?.toUpperCase()}</Text>
                   </Box>
 
-                  <Box flex="2">
-                    <Text fontWeight="bold" mb={2}>Ordered Items:</Text>
+                  <Box flex="2" overflowX="auto">
+                    <Text fontWeight="bold" mb={2} fontSize="md">Ordered Items:</Text>
                     <Table size="sm" variant="simple">
                       <Thead>
                         <Tr>
@@ -159,7 +161,7 @@ const AdminOrdersPage = () => {
                       <Tbody>
                         {order.items?.map((item, idx) => (
                           <Tr key={idx}>
-                            <Td>{item.name}</Td>
+                            <Td maxW="150px" isTruncated>{item.name}</Td>
                             <Td>{item.quantity}</Td>
                             <Td isNumeric>${Number(item.price).toFixed(2)}</Td>
                           </Tr>

@@ -60,13 +60,19 @@ const AuthModal = ({ isOpen, onClose }) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="md" isCentered>
+    <Modal 
+      isOpen={isOpen} 
+      onClose={onClose} 
+      size={{ base: "full", md: "md" }} 
+      isCentered 
+      scrollBehavior="inside"
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>{isLogin ? "Log In to Your Account" : "Create a New Account"}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <VStack as="form" onSubmit={handleSubmit} spacing={4} align="stretch">
+          <VStack as="form" onSubmit={handleSubmit} spacing={4} align="stretch" py={2}>
             {!isLogin && (
               <FormControl isRequired>
                 <FormLabel>Full Name</FormLabel>
@@ -75,6 +81,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="Chama Mthokozisi"
+                  size={{ base: "md", md: "lg" }}
                 />
               </FormControl>
             )}
@@ -87,6 +94,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="chama@example.com"
+                size={{ base: "md", md: "lg" }}
               />
             </FormControl>
 
@@ -98,6 +106,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="********"
+                size={{ base: "md", md: "lg" }}
               />
             </FormControl>
 
@@ -115,7 +124,7 @@ const AuthModal = ({ isOpen, onClose }) => {
         </ModalBody>
 
         <ModalFooter>
-          <Button variant="ghost" mr={3} onClick={onClose}>
+          <Button variant="ghost" mr={3} onClick={onClose} size={{ base: "sm", md: "md" }}>
             Cancel
           </Button>
           <Button
@@ -123,6 +132,7 @@ const AuthModal = ({ isOpen, onClose }) => {
             isLoading={loading}
             loadingText={isLogin ? "Logging in..." : "Signing up..."}
             onClick={handleSubmit}
+            size={{ base: "sm", md: "md" }}
           >
             {isLogin ? "Log In" : "Sign Up"}
           </Button>

@@ -37,14 +37,15 @@ const Navbar = () => {
   return (
     <Container maxW="1140px" px={4}>
       <Flex
-        h={16}
+        py={{ base: 3, md: 4 }}
         alignItems="center"
         justifyContent="space-between"
-        flexDir={{ base: "column", sm: "row" }}
+        flexDir={{ base: "column", md: "row" }}
+        gap={{ base: 3, md: 0 }}
       >
         {/* Logo / Title */}
         <Text
-          fontSize={{ base: "22px", sm: "28px" }}
+          fontSize={{ base: "20px", sm: "24px", md: "28px" }}
           fontWeight="bold"
           textTransform="uppercase"
           textAlign="center"
@@ -57,13 +58,19 @@ const Navbar = () => {
         </Text>
 
         {/* Navigation Links + Buttons */}
-        <HStack spacing={4} alignItems="center">
+        <HStack 
+          spacing={{ base: 2, sm: 4 }} 
+          alignItems="center" 
+          flexWrap="wrap" 
+          justifyContent="center"
+        >
           <NavLink
             to="/"
             style={({ isActive }) => ({
               fontWeight: isActive ? "bold" : "normal",
               color: isActive ? "dodgerblue" : (colorMode === "dark" ? "white" : "black"),
               textDecoration: "none",
+              fontSize: "14px",
             })}
           >
             Home

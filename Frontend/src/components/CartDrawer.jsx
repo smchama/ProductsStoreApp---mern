@@ -21,10 +21,9 @@ import { AddIcon, MinusIcon, DeleteIcon } from "@chakra-ui/icons";
 import useCartStore from "../store/cart.js";
 import SecureCheckoutModal from "./SecureCheckoutModal";
 
-
 const CartDrawer = ({ isOpen, onClose }) => {
   const { cart, updateQuantity, removeFromCart, clearCart } = useCartStore();
-  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false); // 👈 State for checkout modal
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const borderColor = useColorModeValue("gray.200", "gray.700");
 
   // Calculate total price
@@ -35,7 +34,8 @@ const CartDrawer = ({ isOpen, onClose }) => {
 
   return (
     <>
-      <Drawer isOpen={isOpen} placement="right" size="md" onClose={onClose}>
+      {/* Responsive size: full screen on mobile, md drawer on larger devices */}
+      <Drawer isOpen={isOpen} placement="right" size={{ base: "full", md: "md" }} onClose={onClose}>
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton />
@@ -59,17 +59,18 @@ const CartDrawer = ({ isOpen, onClose }) => {
                       borderBottomWidth="1px"
                       borderColor={borderColor}
                       pb={4}
+                      align="center"
                     >
                       <Image
                         src={item.image}
                         alt={item.name}
-                        boxSize="60px"
+                        boxSize={{ base: "50px", md: "60px" }}
                         objectFit="cover"
                         borderRadius="md"
                         fallbackSrc="https://placehold.co/100x100?text=No+Img"
                       />
-                      <VStack align="start" flex="1" px={2} spacing={1}>
-                        <Text fontWeight="bold" noOfLines={1}>
+                      <VStack align="start" flex="1" px={2} spacing={0.5}>
+                        <Text fontWeight="bold" fontSize={{ base: "sm", md: "md" }} noOfLines={1}>
                           {item.name}
                         </Text>
                         <Text fontSize="sm" color="gray.500">
@@ -78,14 +79,16 @@ const CartDrawer = ({ isOpen, onClose }) => {
                       </VStack>
 
                       {/* Quantity controls */}
-                      <HStack spacing={2}>
+                      <HStack spacing={1.5}>
                         <IconButton
                           aria-label="Decrease quantity"
                           icon={<MinusIcon />}
                           size="xs"
                           onClick={() => updateQuantity(itemId, item.quantity - 1)}
                         />
-                        <Text fontWeight="bold">{item.quantity}</Text>
+                        <Text fontWeight="bold" fontSize="sm" px={1}>
+                          {item.quantity}
+                        </Text>
                         <IconButton
                           aria-label="Increase quantity"
                           icon={<AddIcon />}
@@ -119,10 +122,10 @@ const CartDrawer = ({ isOpen, onClose }) => {
                 </Text>
               </HStack>
               <HStack spacing={4} w="full">
-                <Button variant="outline" colorScheme="red" w="50%" onClick={clearCart}>
+                <Button variant="outline" colorScheme="red" w="50%" onClick={clearCart} size={{ base: "sm", md: "md" }}>
                   Clear Cart
                 </Button>
-                <Button colorScheme="blue" w="50%" onClick={() => setIsCheckoutOpen(true)}>
+                <Button colorScheme="blue" w="50%" onClick={() => setIsCheckoutOpen(true)} size={{ base: "sm", md: "md" }}>
                   Checkout
                 </Button>
               </HStack>

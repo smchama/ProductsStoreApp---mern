@@ -74,12 +74,13 @@ const ProductDetailsPage = () => {
   }
 
   return (
-    <Container maxW={"container.xl"} py={8}>
+    <Container maxW={"container.xl"} py={8} px={{ base: 4, md: 8 }}>
       <Button
         leftIcon={<ArrowBackIcon />}
         variant="ghost"
         mb={6}
         onClick={() => navigate("/")}
+        size={{ base: "sm", md: "md" }}
       >
         Back to Products
       </Button>
@@ -89,20 +90,22 @@ const ProductDetailsPage = () => {
         shadow="xl"
         rounded="lg"
         overflow="hidden"
-        p={{ base: 6, md: 10 }}
+        p={{ base: 5, md: 10 }}
         display={{ base: "block", md: "flex" }}
         gap={10}
       >
         {/* Product Image */}
-        <Image
-          src={product.image}
-          alt={product.name}
-          boxSize={{ base: "full", md: "450px" }}
-          objectFit="cover"
-          rounded="lg"
-          fallbackSrc="https://placehold.co/600x400?text=No+Image+Available"
-          mb={{ base: 6, md: 0 }}
-        />
+        <Box w={{ base: "full", md: "450px" }} h={{ base: "300px", md: "450px" }} flexShrink={0} mb={{ base: 6, md: 0 }}>
+          <Image
+            src={product.image}
+            alt={product.name}
+            w="full"
+            h="full"
+            objectFit="cover"
+            rounded="lg"
+            fallbackSrc="https://placehold.co/600x400?text=No+Image+Available"
+          />
+        </Box>
 
         {/* Product Details Info */}
         <VStack align="start" spacing={4} flex="1" justify="center">
@@ -112,23 +115,24 @@ const ProductDetailsPage = () => {
             </Badge>
           )}
 
-          <Heading as="h1" size="2xl">
+          <Heading as="h1" size={{ base: "xl", md: "2xl" }}>
             {product.name}
           </Heading>
 
-          <Text fontSize="3xl" fontWeight="bold" color="green.500">
+          <Text fontSize={{ base: "2xl", md: "3xl" }} fontWeight="bold" color="green.500">
             ${product.price}
           </Text>
 
-          <Text color={textColor} fontSize="lg">
+          <Text color={textColor} fontSize={{ base: "md", md: "lg" }}>
             Experience premium quality with {product.name}. Add it to your cart or explore more options in the catalog.
           </Text>
 
-          <HStack spacing={4} pt={4}>
+          <HStack spacing={4} pt={4} w={{ base: "full", sm: "auto" }}>
             <Button
               leftIcon={<AddIcon />}
               colorScheme="green"
-              size="lg"
+              size={{ base: "md", md: "lg" }}
+              w={{ base: "full", sm: "auto" }}
               onClick={() => {
                 addToCart(product);
                 toast({

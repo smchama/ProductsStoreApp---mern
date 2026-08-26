@@ -54,10 +54,10 @@ const HomePage = () => {
   };
 
   return (
-    <Container maxW="container.xl" py={12}>
-      <VStack spacing={8} w="full">
+    <Container maxW="container.xl" py={{ base: 6, md: 12 }} px={{ base: 4, md: 8 }}>
+      <VStack spacing={6} w="full">
         <Text
-          fontSize="30"
+          fontSize={{ base: "24px", md: "30px" }}
           fontWeight="bold"
           bgGradient="linear(to-r, cyan.400, blue.500)"
           bgClip="text"
@@ -66,45 +66,58 @@ const HomePage = () => {
           Current Available Products
         </Text>
 
-        {/* --- SEARCH & FILTER CONTROLS BAR --- */}
+        {/* --- SEARCH & FILTER CONTROLS BAR (Mobile Responsive) --- */}
         <Flex
           w="full"
           direction={{ base: "column", md: "row" }}
           gap={4}
           justify="space-between"
-          align="center"
+          align="stretch"
         >
           {/* Search Input */}
           <Input
             placeholder="Search products by name..."
             value={searchTerm}
             onChange={handleSearchChange}
-            maxW={{ base: "full", md: "350px" }}
+            w={{ base: "full", md: "350px" }}
           />
 
-          <HStack w={{ base: "full", md: "auto" }} spacing={4}>
+          {/* Filter & Sort Container */}
+          <Flex
+            direction={{ base: "column", sm: "row" }}
+            w={{ base: "full", md: "auto" }}
+            gap={4}
+          >
             {/* Category Dropdown */}
-            <Select value={category} onChange={handleCategoryChange} maxW="200px">
+            <Select 
+              value={category} 
+              onChange={handleCategoryChange} 
+              w={{ base: "full", sm: "200px" }}
+            >
               <option value="all">All Categories</option>
               <option value="electronics">Electronics</option>
               <option value="watches">Watches</option>
-             <option value="clothing">Clothing</option>
-             <option value="groceries">Groceries</option>
-             <option value="cosmetics">Cosmetics</option>
-             <option value="footware">Footware</option>
-             <option value="home goods">Home Goods</option>
-             <option value="bags-wallets">Bags-Wallets</option>
-             <option value="accessories">Accessories</option>
+              <option value="clothing">Clothing</option>
+              <option value="groceries">Groceries</option>
+              <option value="cosmetics">Cosmetics</option>
+              <option value="footware">Footware</option>
+              <option value="home goods">Home Goods</option>
+              <option value="bags-wallets">Bags-Wallets</option>
+              <option value="accessories">Accessories</option>
             </Select>
 
             {/* Sorting Dropdown */}
-            <Select value={sort} onChange={handleSortChange} maxW="200px">
+            <Select 
+              value={sort} 
+              onChange={handleSortChange} 
+              w={{ base: "full", sm: "200px" }}
+            >
               <option value="newest">Newest Arrivals</option>
               <option value="oldest">Oldest</option>
               <option value="price_low">Price: Low to High</option>
               <option value="price_high">Price: High to Low</option>
             </Select>
-          </HStack>
+          </Flex>
         </Flex>
 
         {/* --- LOADING SPINNER OR PRODUCT GRID --- */}
@@ -115,8 +128,8 @@ const HomePage = () => {
         ) : products && products.length > 0 ? (
           <>
             <SimpleGrid
-              columns={{ base: 1, md: 2, lg: 3, xl: 4 }}
-              spacing={10}
+              columns={{ base: 1, sm: 2, lg: 3, xl: 4 }}
+              spacing={{ base: 4, md: 8 }}
               w="full"
             >
               {products.map((product) => (
@@ -126,17 +139,18 @@ const HomePage = () => {
 
             {/* --- PAGINATION CONTROLS --- */}
             {totalPages > 1 && (
-              <HStack spacing={4} mt={8} justify="center">
+              <HStack spacing={4} mt={8} justify="center" flexWrap="wrap">
                 <Button
                   onClick={() => fetchProducts({ page: currentPage - 1 })}
                   isDisabled={currentPage === 1}
                   colorScheme="blue"
                   variant="outline"
+                  size={{ base: "sm", md: "md" }}
                 >
                   Previous
                 </Button>
 
-                <Text fontWeight="bold">
+                <Text fontWeight="bold" fontSize={{ base: "sm", md: "md" }}>
                   Page {currentPage} of {totalPages}
                 </Text>
 
@@ -145,6 +159,7 @@ const HomePage = () => {
                   isDisabled={currentPage === totalPages}
                   colorScheme="blue"
                   variant="outline"
+                  size={{ base: "sm", md: "md" }}
                 >
                   Next
                 </Button>
@@ -153,7 +168,7 @@ const HomePage = () => {
           </>
         ) : (
           <Text
-            fontSize="xl"
+            fontSize={{ base: "lg", md: "xl" }}
             textAlign="center"
             fontWeight="bold"
             color="gray.500"

@@ -1,6 +1,4 @@
-// Force update token payload - August 2026
-
-// src/components/CheckoutModal.jsx
+// src/components/SecureCheckoutModal.jsx
 import React, { useState } from "react";
 import {
   Modal,
@@ -125,13 +123,19 @@ const SecureCheckoutModal = ({ isOpen, onClose, totalAmount }) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="lg" isCentered>
+    <Modal 
+      isOpen={isOpen} 
+      onClose={onClose} 
+      size={{ base: "full", md: "lg" }} 
+      isCentered 
+      scrollBehavior="inside"
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Checkout & Shipping (Secure)</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <VStack as="form" onSubmit={handleCheckoutSubmit} spacing={4} align="stretch">
+          <VStack as="form" onSubmit={handleCheckoutSubmit} spacing={4} align="stretch" py={2}>
             <FormControl isRequired>
               <FormLabel>Full Name</FormLabel>
               <Input
@@ -139,6 +143,7 @@ const SecureCheckoutModal = ({ isOpen, onClose, totalAmount }) => {
                 value={formData.fullName}
                 onChange={handleChange}
                 placeholder="Chama Mthokozisi"
+                size={{ base: "md", md: "lg" }}
               />
             </FormControl>
 
@@ -149,6 +154,7 @@ const SecureCheckoutModal = ({ isOpen, onClose, totalAmount }) => {
                 value={formData.address}
                 onChange={handleChange}
                 placeholder="123 Main Street"
+                size={{ base: "md", md: "lg" }}
               />
             </FormControl>
 
@@ -159,6 +165,7 @@ const SecureCheckoutModal = ({ isOpen, onClose, totalAmount }) => {
                 value={formData.city}
                 onChange={handleChange}
                 placeholder="Gwanda"
+                size={{ base: "md", md: "lg" }}
               />
             </FormControl>
 
@@ -168,6 +175,7 @@ const SecureCheckoutModal = ({ isOpen, onClose, totalAmount }) => {
                 name="paymentMethod"
                 value={formData.paymentMethod}
                 onChange={handleChange}
+                size={{ base: "md", md: "lg" }}
               >
                 <option value="cod">Cash on Delivery</option>
                 <option value="card">Credit / Debit Card (Simulated)</option>
@@ -189,7 +197,7 @@ const SecureCheckoutModal = ({ isOpen, onClose, totalAmount }) => {
         </ModalBody>
 
         <ModalFooter>
-          <Button variant="ghost" mr={3} onClick={onClose}>
+          <Button variant="ghost" mr={3} onClick={onClose} size={{ base: "sm", md: "md" }}>
             Cancel
           </Button>
           <Button
@@ -197,6 +205,7 @@ const SecureCheckoutModal = ({ isOpen, onClose, totalAmount }) => {
             isLoading={isSubmitting}
             loadingText="Saving Order..."
             onClick={handleCheckoutSubmit}
+            size={{ base: "sm", md: "md" }}
           >
             Confirm Order
           </Button>

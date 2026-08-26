@@ -123,12 +123,13 @@ const ProductCard = ({ product }) => {
         display="flex"
         flexDirection="column"
         justifyContent="space-between"
+        w="full"
       >
         {/* Product Image with Fallback */}
         <Image
           src={product.image}
           alt={product.name}
-          h={48}
+          h={{ base: "180px", md: "48" }}
           w="full"
           objectFit="cover"
           cursor="pointer"
@@ -155,7 +156,7 @@ const ProductCard = ({ product }) => {
           </Box>
 
           {/* Actions: Admin Controls (if admin) + Add to Cart */}
-          <HStack spacing={2} justifyContent="space-between" mt={2}>
+          <HStack spacing={2} justifyContent="space-between" mt={2} flexWrap="wrap" gap={2}>
             {user?.role === "admin" ? (
               <HStack spacing={2}>
                 <IconButton
@@ -191,7 +192,7 @@ const ProductCard = ({ product }) => {
 
       {/* --- UPDATE MODAL (Admin Only) --- */}
       {user?.role === "admin" && (
-        <Modal isOpen={isEditOpen} onClose={onEditClose}>
+        <Modal isOpen={isEditOpen} onClose={onEditClose} size={{ base: "full", md: "md" }} scrollBehavior="inside">
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>Update Product</ModalHeader>
@@ -259,7 +260,7 @@ const ProductCard = ({ product }) => {
 
       {/* --- DELETE CONFIRMATION MODAL (Admin Only) --- */}
       {user?.role === "admin" && (
-        <Modal isOpen={isDeleteOpen} onClose={onDeleteClose} isCentered>
+        <Modal isOpen={isDeleteOpen} onClose={onDeleteClose} isCentered size={{ base: "xs", md: "md" }}>
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>Delete Product</ModalHeader>

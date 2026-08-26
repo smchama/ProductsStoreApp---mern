@@ -50,14 +50,14 @@ const Footer = () => {
     >
       <Container as={Stack} maxW={"1140px"} py={10}>
         <SimpleGrid
-          templateColumns={{ sm: "1fr 1fr", md: "2fr 1fr 1fr" }}
+          templateColumns={{ base: "1fr", sm: "1fr 1fr", md: "2fr 1fr 1fr" }}
           spacing={8}
         >
           {/* Column 1: Marketing / About */}
           <Stack spacing={6}>
             <Box>
               <Text
-                fontSize={"20px"}
+                fontSize={{ base: "18px", md: "20px" }}
                 fontWeight={"bold"}
                 bgGradient="linear(to-r, cyan.400, blue.500)"
                 bgClip="text"
@@ -80,8 +80,8 @@ const Footer = () => {
             <Text fontWeight={"bold"} fontSize={"lg"} mb={2}>
               Visit & Contact
             </Text>
-            <HStack spacing={2} fontSize={"sm"}>
-              <FaMapMarkerAlt color="dodgerblue" />
+            <HStack spacing={2} fontSize={"sm"} align="flex-start">
+              <Box mt={1}><FaMapMarkerAlt color="dodgerblue" /></Box>
               <Text>Gwanda, Matabeleland South, Zimbabwe</Text>
             </HStack>
             <HStack spacing={2} fontSize={"sm"}>
@@ -90,7 +90,7 @@ const Footer = () => {
             </HStack>
             <HStack spacing={2} fontSize={"sm"}>
               <FaEnvelope color="dodgerblue" />
-              <Text>support@chamzaproducts.com</Text>
+              <Text wordBreak="break-all">support@chamzaproducts.com</Text>
             </HStack>
           </Stack>
 
