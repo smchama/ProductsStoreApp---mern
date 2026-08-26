@@ -22,6 +22,8 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
+  Button,
+  useToast,
 } from "@chakra-ui/react";
 import { FiSearch } from "react-icons/fi";
 import useAuthStore from "../store/auth.js";
@@ -34,6 +36,7 @@ const AdminOrdersPage = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const cardBg = useColorModeValue("white", "gray.800");
+  const toast = useToast();
 
   // ✅ Grab token from Zustand store with a fallback directly to localStorage
   const { token: storeToken } = useAuthStore();
@@ -68,6 +71,65 @@ const AdminOrdersPage = () => {
 
     fetchOrders();
   }, [token]);
+
+  // ✅ Handle cycling or updating the order status
+  const handleUpdateStatus = async (orderId, currentStatus) => {
+    const nextStatusMap = {
+      Pending: "Processing",
+      Processing: "Delivered",
+      Delivered: "Pending",
+      Cancelled: "Pending",
+    };
+
+    const newStatus = nextStatusMap[currentStatus] || "Processing";
+
+    try {
+      const res = await fetch(`${API_URL}/api/orders/${orderId}/status`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to update status");
+
+      toast({
+        title: "Status Updated 🎉",
+        description: `Order moved to ${newStatus}`,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+
+      // Update local state instantly without a full page reload
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order._id === orderId ? { ...order, status: newStatus } : order
+        )
+      );
+    } catch (error) {
+      toast({
+        title: "Update Failed",
+        description: error.message,
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const getStatusColorScheme = (status) => {
+    switch (status) {
+      case "Pending": return "yellow";
+      case "Processing": return "blue";
+      case "Delivered": return "green";
+      case "Cancelled": return "red";
+      default: return "gray";
+    }
+  };
 
   const filteredOrders = orders.filter(
     (order) =>
@@ -127,15 +189,26 @@ const AdminOrdersPage = () => {
                       Placed on: {new Date(order.createdAt).toLocaleString()}
                     </Text>
                   </Box>
-                  <Badge
-                    colorScheme={order.status === "Pending" ? "yellow" : "green"}
-                    fontSize="0.9em"
-                    p={2}
-                    borderRadius="md"
-                    h="fit-content"
-                  >
-                    {order.status || "Pending"}
-                  </Badge>
+
+                  {/* ✅ Interactive Status Badge & Action Button */}
+                  <Stack direction="row" align="center" spacing={3}>
+                    <Badge
+                      colorScheme={getStatusColorScheme(order.status)}
+                      fontSize="0.9em"
+                      p={2}
+                      borderRadius="md"
+                    >
+                      {order.status || "Pending"}
+                    </Badge>
+                    <Button
+                      size="sm"
+                      colorScheme="blue"
+                      variant="outline"
+                      onClick={() => handleUpdateStatus(order._id, order.status || "Pending")}
+                    >
+                      Advance Status 🔄
+                    </Button>
+                  </Stack>
                 </Stack>
 
                 <Divider mb={4} />
