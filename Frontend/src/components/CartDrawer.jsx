@@ -34,14 +34,15 @@ const CartDrawer = ({ isOpen, onClose }) => {
 
   return (
     <>
-      {/* Responsive size: full screen on mobile, md drawer on larger devices */}
+      {/* Responsive drawer: full screen on mobile, md drawer on larger devices */}
       <Drawer isOpen={isOpen} placement="right" size={{ base: "full", md: "md" }} onClose={onClose}>
         <DrawerOverlay />
-        <DrawerContent>
-          <DrawerCloseButton />
-          <DrawerHeader borderBottomWidth="1px">Your Shopping Cart</DrawerHeader>
+        <DrawerContent display="flex" flexDirection="column" maxH="100dvh">
+          <DrawerCloseButton zIndex="10" />
+          <DrawerHeader borderBottomWidth="1px" flexShrink={0}>Your Shopping Cart</DrawerHeader>
 
-          <DrawerBody>
+          {/* Scrollable body to prevent overstretching */}
+          <DrawerBody overflowY="auto" flex="1" px={{ base: 3, md: 6 }}>
             {cart.length === 0 ? (
               <VStack justify="center" h="full" spacing={4}>
                 <Text fontSize="lg" color="gray.500">
@@ -69,7 +70,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
                         borderRadius="md"
                         fallbackSrc="https://placehold.co/100x100?text=No+Img"
                       />
-                      <VStack align="start" flex="1" px={2} spacing={0.5}>
+                      <VStack align="start" flex="1" px={2} spacing={0.5} overflow="hidden">
                         <Text fontWeight="bold" fontSize={{ base: "sm", md: "md" }} noOfLines={1}>
                           {item.name}
                         </Text>
@@ -79,11 +80,11 @@ const CartDrawer = ({ isOpen, onClose }) => {
                       </VStack>
 
                       {/* Quantity controls */}
-                      <HStack spacing={1.5}>
+                      <HStack spacing={1}>
                         <IconButton
                           aria-label="Decrease quantity"
                           icon={<MinusIcon />}
-                          size="xs"
+                          size="sm"
                           onClick={() => updateQuantity(itemId, item.quantity - 1)}
                         />
                         <Text fontWeight="bold" fontSize="sm" px={1}>
@@ -92,7 +93,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
                         <IconButton
                           aria-label="Increase quantity"
                           icon={<AddIcon />}
-                          size="xs"
+                          size="sm"
                           onClick={() => updateQuantity(itemId, item.quantity + 1)}
                         />
                         <IconButton
@@ -112,8 +113,16 @@ const CartDrawer = ({ isOpen, onClose }) => {
           </DrawerBody>
 
           {cart.length > 0 && (
-            <DrawerFooter borderTopWidth="1px" flexDirection="column" align="stretch">
-              <HStack justify="space-between" mb={4} w="full">
+            <DrawerFooter 
+              borderTopWidth="1px" 
+              flexDirection="column" 
+              align="stretch" 
+              flexShrink={0}
+              bg={useColorModeValue("white", "gray.800")}
+              boxShadow="lg"
+              py={4}
+            >
+              <HStack justify="space-between" mb={3} w="full">
                 <Text fontSize="lg" fontWeight="bold">
                   Total:
                 </Text>
@@ -121,11 +130,11 @@ const CartDrawer = ({ isOpen, onClose }) => {
                   ${totalPrice.toFixed(2)}
                 </Text>
               </HStack>
-              <HStack spacing={4} w="full">
-                <Button variant="outline" colorScheme="red" w="50%" onClick={clearCart} size={{ base: "sm", md: "md" }}>
+              <HStack spacing={3} w="full">
+                <Button variant="outline" colorScheme="red" w="50%" onClick={clearCart} size="lg">
                   Clear Cart
                 </Button>
-                <Button colorScheme="blue" w="50%" onClick={() => setIsCheckoutOpen(true)} size={{ base: "sm", md: "md" }}>
+                <Button colorScheme="blue" w="50%" onClick={() => setIsCheckoutOpen(true)} size="lg">
                   Checkout
                 </Button>
               </HStack>

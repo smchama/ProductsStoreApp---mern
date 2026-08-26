@@ -131,11 +131,12 @@ const SecureCheckoutModal = ({ isOpen, onClose, totalAmount }) => {
       scrollBehavior="inside"
     >
       <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Checkout & Shipping (Secure)</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <VStack as="form" onSubmit={handleCheckoutSubmit} spacing={4} align="stretch" py={2}>
+      <ModalContent display="flex" flexDirection="column" maxH={{ base: "100dvh", md: "85vh" }}>
+        <ModalHeader flexShrink={0}>Checkout & Shipping (Secure)</ModalHeader>
+        <ModalCloseButton zIndex="10" />
+        
+        <ModalBody overflowY="auto" flex="1" px={{ base: 4, md: 6 }}>
+          <VStack as="form" id="checkout-form" onSubmit={handleCheckoutSubmit} spacing={4} align="stretch" py={2}>
             <FormControl isRequired>
               <FormLabel>Full Name</FormLabel>
               <Input
@@ -143,7 +144,7 @@ const SecureCheckoutModal = ({ isOpen, onClose, totalAmount }) => {
                 value={formData.fullName}
                 onChange={handleChange}
                 placeholder="Chama Mthokozisi"
-                size={{ base: "md", md: "lg" }}
+                size="lg"
               />
             </FormControl>
 
@@ -154,7 +155,7 @@ const SecureCheckoutModal = ({ isOpen, onClose, totalAmount }) => {
                 value={formData.address}
                 onChange={handleChange}
                 placeholder="123 Main Street"
-                size={{ base: "md", md: "lg" }}
+                size="lg"
               />
             </FormControl>
 
@@ -165,7 +166,7 @@ const SecureCheckoutModal = ({ isOpen, onClose, totalAmount }) => {
                 value={formData.city}
                 onChange={handleChange}
                 placeholder="Gwanda"
-                size={{ base: "md", md: "lg" }}
+                size="lg"
               />
             </FormControl>
 
@@ -175,7 +176,7 @@ const SecureCheckoutModal = ({ isOpen, onClose, totalAmount }) => {
                 name="paymentMethod"
                 value={formData.paymentMethod}
                 onChange={handleChange}
-                size={{ base: "md", md: "lg" }}
+                size="lg"
               >
                 <option value="cod">Cash on Delivery</option>
                 <option value="card">Credit / Debit Card (Simulated)</option>
@@ -196,8 +197,8 @@ const SecureCheckoutModal = ({ isOpen, onClose, totalAmount }) => {
           </VStack>
         </ModalBody>
 
-        <ModalFooter>
-          <Button variant="ghost" mr={3} onClick={onClose} size={{ base: "sm", md: "md" }}>
+        <ModalFooter flexShrink={0} borderTopWidth="1px" bg="white" _dark={{ bg: "gray.800" }} boxShadow="lg">
+          <Button variant="ghost" mr={3} onClick={onClose} size="lg">
             Cancel
           </Button>
           <Button
@@ -205,7 +206,8 @@ const SecureCheckoutModal = ({ isOpen, onClose, totalAmount }) => {
             isLoading={isSubmitting}
             loadingText="Saving Order..."
             onClick={handleCheckoutSubmit}
-            size={{ base: "sm", md: "md" }}
+            size="lg"
+            flex="1"
           >
             Confirm Order
           </Button>
