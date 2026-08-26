@@ -14,7 +14,6 @@ import {
   Text,
   Image,
   IconButton,
-  Box,
   useColorModeValue,
 } from "@chakra-ui/react";
 import { AddIcon, MinusIcon, DeleteIcon } from "@chakra-ui/icons";
@@ -24,7 +23,10 @@ import SecureCheckoutModal from "./SecureCheckoutModal";
 const CartDrawer = ({ isOpen, onClose }) => {
   const { cart, updateQuantity, removeFromCart, clearCart } = useCartStore();
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  
+  // ✅ Hooks are called at the top level here, satisfying React's rules
   const borderColor = useColorModeValue("gray.200", "gray.700");
+  const footerBg = useColorModeValue("white", "gray.800");
 
   // Calculate total price
   const totalPrice = cart.reduce(
@@ -118,7 +120,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
               flexDirection="column" 
               align="stretch" 
               flexShrink={0}
-              bg={useColorModeValue("white", "gray.800")}
+              bg={footerBg}
               boxShadow="lg"
               py={4}
             >

@@ -20,7 +20,6 @@ import {
 } from "@chakra-ui/react";
 import useCartStore from "../store/cart.js";
 
-// ✅ Point directly to your live Render backend if VITE_API_URL is missing
 const API_URL = import.meta.env.VITE_API_URL || "https://products-backend-7.onrender.com";
 
 const SecureCheckoutModal = ({ isOpen, onClose, totalAmount }) => {
@@ -56,11 +55,7 @@ const SecureCheckoutModal = ({ isOpen, onClose, totalAmount }) => {
     setIsSubmitting(true);
 
     try {
-      // 1. Retrieve the authentication token from localStorage securely
       const token = localStorage.getItem("token");
-
-      // Debug check to inspect live storage in browser console
-      console.log("CheckoutModal token check:", token ? "Token exists" : "No token found");
 
       if (!token) {
         throw new Error("You must be logged in to place an order.");
@@ -81,7 +76,6 @@ const SecureCheckoutModal = ({ isOpen, onClose, totalAmount }) => {
         totalAmount: totalAmount,
       };
 
-      // 2. Pass the token and full live URL in the Authorization request
       const res = await fetch(`${API_URL}/api/orders`, {
         method: "POST",
         headers: {
@@ -131,12 +125,14 @@ const SecureCheckoutModal = ({ isOpen, onClose, totalAmount }) => {
       scrollBehavior="inside"
     >
       <ModalOverlay />
-      <ModalContent display="flex" flexDirection="column" maxH={{ base: "100dvh", md: "85vh" }}>
-        <ModalHeader flexShrink={0}>Checkout & Shipping (Secure)</ModalHeader>
+      {/* Restrict maximum height on mobile and enable flex column layout */}
+      <ModalContent display="flex" flexDirection="column" maxH={{ base: "85vh", md: "85vh" }} my="auto">
+        <ModalHeader flexShrink={0} borderBottomWidth="1px">Checkout & Shipping (Secure)</ModalHeader>
         <ModalCloseButton zIndex="10" />
         
-        <ModalBody overflowY="auto" flex="1" px={{ base: 4, md: 6 }}>
-          <VStack as="form" id="checkout-form" onSubmit={handleCheckoutSubmit} spacing={4} align="stretch" py={2}>
+        {/* Scrollable container allowing users to scroll freely up and down */}
+        <ModalBody overflowY="auto" flex="1" px={{ base: 4, md: 6 }} py={4}>
+          <VStack as="form" id="checkout-form" onSubmit={handleCheckoutSubmit} spacing={4} align="stretch">
             <FormControl isRequired>
               <FormLabel>Full Name</FormLabel>
               <Input
@@ -197,7 +193,8 @@ const SecureCheckoutModal = ({ isOpen, onClose, totalAmount }) => {
           </VStack>
         </ModalBody>
 
-        <ModalFooter flexShrink={0} borderTopWidth="1px" bg="white" _dark={{ bg: "gray.800" }} boxShadow="lg">
+        {/* Footer stays neatly pinned at the bottom of the modal card */}
+        <ModalFooter flexShrink={0} borderTopWidth="1px" bg="white" _dark={{ bg: "gray.800" }} py={3}>
           <Button variant="ghost" mr={3} onClick={onClose} size="lg">
             Cancel
           </Button>
