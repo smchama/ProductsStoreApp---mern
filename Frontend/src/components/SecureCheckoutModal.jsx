@@ -125,14 +125,21 @@ const SecureCheckoutModal = ({ isOpen, onClose, totalAmount }) => {
       scrollBehavior="inside"
     >
       <ModalOverlay />
-      {/* Restrict maximum height on mobile and enable flex column layout */}
-      <ModalContent display="flex" flexDirection="column" maxH={{ base: "85vh", md: "85vh" }} my="auto">
+      {/* Fully responsive height constraints and margin handling for mobile and desktop */}
+      <ModalContent 
+        display="flex" 
+        flexDirection="column" 
+        h={{ base: "100vh", md: "auto" }} 
+        maxH={{ base: "100vh", md: "85vh" }} 
+        my={{ base: 0, md: "auto" }}
+        borderRadius={{ base: 0, md: "md" }}
+      >
         <ModalHeader flexShrink={0} borderBottomWidth="1px">Checkout & Shipping (Secure)</ModalHeader>
         <ModalCloseButton zIndex="10" />
         
         {/* Scrollable container allowing users to scroll freely up and down */}
         <ModalBody overflowY="auto" flex="1" px={{ base: 4, md: 6 }} py={4}>
-          <VStack as="form" id="checkout-form" onSubmit={handleCheckoutSubmit} spacing={4} align="stretch">
+          <VStack as="form" id="checkout-form" onSubmit={handleCheckoutSubmit} spacing={4} align="stretch" w="full">
             <FormControl isRequired>
               <FormLabel>Full Name</FormLabel>
               <Input
