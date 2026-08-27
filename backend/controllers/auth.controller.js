@@ -22,7 +22,6 @@ export const signup = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     // 🔒 Automatically assign admin role if email matches your admin address
-    // Replace with your exact admin email address
     const adminEmail = "smchama@gmail.com"; 
     const assignedRole = email.toLowerCase() === adminEmail.toLowerCase() ? "admin" : "customer";
 
@@ -75,6 +74,13 @@ export const login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ success: false, message: "Invalid email or password." });
+    }
+
+    // 🔒 Auto-promote existing account on login if it matches your admin email
+    const adminEmail = "smchama@gmail.com";
+    if (email.toLowerCase() === adminEmail.toLowerCase() && user.role !== "admin") {
+      user.role = "admin";
+      await user.save();
     }
 
     const token = jwt.sign(
