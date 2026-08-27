@@ -12,13 +12,13 @@ dotenv.config({ path: path.join(__dirname, "../.env") });
 
 import express from "express";
 import connectDB from "./config/db.js";
-import authRoutes from "./routes/auth.route.js"; // 👈 Fixed import path
+import authRoutes from "./routes/auth.route.js";
 import productRoute from "./routes/product.route.js";
 import orderRoutes from "./routes/order.route.js";
 import helmet from "helmet";
 
-import cors from "cors"; // ✅ Import cors
-import { devCSP, prodCSP } from "./config/cspConfig.js"; // ✅ CSP rules
+import cors from "cors";
+import { devCSP, prodCSP } from "./config/cspConfig.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -26,7 +26,7 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(express.json());
 
-// ✅ Enable CORS for both live and local frontends
+// ✅ Enable CORS with explicit allowedHeaders for Authorization
 app.use(
   cors({
     origin: [
@@ -34,6 +34,7 @@ app.use(
       "http://localhost:5173"
     ], 
     methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"], // 👈 Crucial for Bearer tokens
     credentials: true,
   })
 );
@@ -54,26 +55,6 @@ connectDB();
 app.use("/api/products", productRoute);
 app.use("/api/orders", orderRoutes);
 app.use("/api/auth", authRoutes);
-
-/* 
-  COMMENT OUT OR REMOVE FRONTEND SERVING FOR BACKEND-ONLY DEPLOYMENT
-  -----------------------------------------------------------------
-  This section is only needed if your backend serves the frontend.
-  Since this is a backend-only repo, remove or comment it out
-  to avoid "ENOENT: no such file or directory" errors on Render.
-*/
-
-// if (process.env.NODE_ENV === "production") {
-//   const frontendDist = path.join(__dirname, "../frontend/dist");
-//   console.log("Serving frontend from:", frontendDist);
-
-//   app.use(express.static(frontendDist));
-
-//   app.get("/*", (req, res) => {
-//     res.sendFile(path.resolve(frontendDist, "index.html"));
-//   });
-// }
-//
 
 // Start the server 
 app.listen(PORT, () => {
