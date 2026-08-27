@@ -36,23 +36,34 @@ export const protect = (req, res, next) => {
   }
 };
 
-// 2. Admin Authorization Middleware (Smart Database Fallback)
+// 2. Admin Authorization Middleware (Smart Database Fallback with Debug Logs)
 export const protectAdmin = async (req, res, next) => {
   try {
+    console.log("--- DEBUG ADMIN CHECK ---");
+    console.log("req.user from token:", req.user);
+
     // Check if token already has admin role
     if (req.user && req.user.role === "admin") {
+      console.log("Admin access granted via token role.");
       return next();
     }
 
     // Fallback: Query database directly using userId from token if role is missing
     if (req.user && req.user.userId) {
       const user = await User.findById(req.user.userId);
+      console.log(
+        "Found user in DB:",
+        user ? { email: user.email, role: user.role } : "User not found"
+      );
+
       if (user && user.role === "admin") {
         req.user.role = "admin"; // Attach role for downstream controllers
+        console.log("Admin access granted via database fallback.");
         return next();
       }
     }
 
+    console.log("Access DENIED: User is not admin.");
     return res.status(403).json({
       success: false,
       message: "Access denied. Admin privileges required.",
