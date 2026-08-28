@@ -70,6 +70,33 @@ const AdminUsersPage = () => {
     }
   };
 
+  const handleToggleBlock = async (userId, currentStatus) => {
+    const newStatus = currentStatus === "blocked" ? "active" : "blocked";
+    let reason = "";
+
+    if (newStatus === "blocked") {
+      reason = prompt("Enter reason for blocking this user:") || "Administrative block";
+    }
+
+    try {
+      const res = await fetch(`${API_URL}/api/auth/users/${userId}/status`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status: newStatus, blockReason: reason }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+
+      setUsers(users.map(u => u._id === userId ? { ...u, status: newStatus, blockReason: reason } : u));
+      toast({ title: "Success", description: data.message, status: "success", duration: 3000 });
+    } catch (error) {
+      toast({ title: "Error", description: error.message, status: "error", duration: 4000 });
+    }
+  };
+
   const handleDeleteUser = async (userId) => {
     if (!window.confirm("Are you sure you want to delete this user account?")) return;
 
@@ -92,13 +119,16 @@ const AdminUsersPage = () => {
 
   return (
     <Container maxW="container.xl" py={8}>
-      <Heading mb={6}>Admin Dashboard: Manage Users ({users.length})</Heading>
+      <Heading mb={6} textAlign="center">
+        Admin Dashboard: Manage Users ({users.length})
+      </Heading>
       <Box bg={cardBg} p={6} borderRadius="lg" shadow="md" overflowX="auto">
         <Table variant="simple">
           <Thead>
             <Tr>
               <Th>Name / Email</Th>
               <Th>Role</Th>
+              <Th>Status</Th>
               <Th>Joined Date</Th>
               <Th>Actions</Th>
             </Tr>
@@ -113,10 +143,25 @@ const AdminUsersPage = () => {
                 <Td>
                   <Badge colorScheme={u.role === "admin" ? "purple" : "green"}>{u.role}</Badge>
                 </Td>
+                <Td>
+                  <Badge colorScheme={u.status === "active" ? "green" : u.status === "inactive" ? "yellow" : "red"}>
+                    {u.status || "active"}
+                  </Badge>
+                  {u.status === "inactive" && <Text fontSize="xs" color="orange.500">No login in 1+ yr</Text>}
+                </Td>
                 <Td>{new Date(u.createdAt).toLocaleDateString()}</Td>
                 <Td>
-                  <Button size="sm" colorScheme="orange" leftIcon={<FiKey />} mr={2} onClick={() => handleResetPassword(u._id)}>
+                  <Button size="sm" colorScheme="orange" leftIcon={<FiKey />} mr={2} mb={{ base: 1, xl: 0 }} onClick={() => handleResetPassword(u._id)}>
                     Reset Password
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    colorScheme={u.status === "blocked" ? "green" : "yellow"} 
+                    mr={2} 
+                    mb={{ base: 1, xl: 0 }}
+                    onClick={() => handleToggleBlock(u._id, u.status)}
+                  >
+                    {u.status === "blocked" ? "Unblock" : "Block"}
                   </Button>
                   <Button size="sm" colorScheme="red" leftIcon={<FiTrash2 />} onClick={() => handleDeleteUser(u._id)}>
                     Delete
