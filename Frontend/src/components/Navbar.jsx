@@ -17,23 +17,22 @@ import {
   Avatar,
 } from "@chakra-ui/react";
 import { NavLink, Link as RouterLink } from "react-router-dom";
-import { FiPlusSquare, FiSun, FiMoon, FiShoppingCart, FiUser, FiPackage } from "react-icons/fi";
+import { FiPlusSquare, FiSun, FiMoon, FiShoppingCart, FiUser, FiPackage, FiUsers } from "react-icons/fi";
 import useCartStore from "../store/cart.js";
 import useAuthStore from "../store/auth.js";
 import CartDrawer from "./CartDrawer.jsx";
 import AuthModal from "./AuthModal.jsx";
-import MyOrdersModal from "./MyOrdersModal.jsx"; // 👈 Added tracking modal
+import MyOrdersModal from "./MyOrdersModal.jsx";
 
 const Navbar = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [isOrdersOpen, setIsOrdersOpen] = useState(false); // 👈 State for My Orders Modal
+  const [isOrdersOpen, setIsOrdersOpen] = useState(false);
   
   const cart = useCartStore((state) => state.cart);
   const { user, logout } = useAuthStore();
 
-  // Calculate total item count for the badge
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
@@ -45,7 +44,6 @@ const Navbar = () => {
         flexDir={{ base: "column", md: "row" }}
         gap={{ base: 3, md: 0 }}
       >
-        {/* Logo / Title */}
         <Text
           fontSize={{ base: "20px", sm: "24px", md: "28px" }}
           fontWeight="bold"
@@ -59,7 +57,6 @@ const Navbar = () => {
           </NavLink>
         </Text>
 
-        {/* Navigation Links + Buttons */}
         <HStack 
           spacing={{ base: 2, sm: 4 }} 
           alignItems="center" 
@@ -78,7 +75,6 @@ const Navbar = () => {
             Home
           </NavLink>
 
-          {/* Create Product Button - Admin Only */}
           {user?.role === "admin" && (
             <NavLink to="/create">
               <Button
@@ -91,7 +87,6 @@ const Navbar = () => {
             </NavLink>
           )}
 
-          {/* My Orders Button - Logged in Customers */}
           {user && (
             <Button
               leftIcon={<FiPackage />}
@@ -104,7 +99,6 @@ const Navbar = () => {
             </Button>
           )}
 
-          {/* Shopping Cart Button with Badge */}
           <Box position="relative">
             <Button
               leftIcon={<FiShoppingCart />}
@@ -129,7 +123,6 @@ const Navbar = () => {
             )}
           </Box>
 
-          {/* User Authentication Menu / Button */}
           {user ? (
             <Menu>
               <MenuButton
@@ -148,9 +141,14 @@ const Navbar = () => {
                   {user.name}
                 </MenuItem>
                 {user.role === "admin" && (
-                  <MenuItem as={RouterLink} to={"/admin/orders"}>
-                    Admin Orders
-                  </MenuItem>
+                  <>
+                    <MenuItem as={RouterLink} to={"/admin/orders"} icon={<FiPackage />}>
+                      Admin Orders
+                    </MenuItem>
+                    <MenuItem as={RouterLink} to={"/admin/users"} icon={<FiUsers />}>
+                      Manage Users
+                    </MenuItem>
+                  </>
                 )}
                 <MenuItem onClick={logout} color="red.500">
                   Log Out
@@ -169,7 +167,6 @@ const Navbar = () => {
             </Button>
           )}
 
-          {/* Toggle Light/Dark Mode Button */}
           <IconButton
             aria-label="Toggle color mode"
             icon={colorMode === "light" ? <FiMoon /> : <FiSun />}
@@ -180,13 +177,8 @@ const Navbar = () => {
         </HStack>
       </Flex>
 
-      {/* Cart Drawer Component */}
       <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
-
-      {/* Auth Modal Component */}
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
-
-      {/* My Orders Tracking Modal Component */}
       <MyOrdersModal isOpen={isOrdersOpen} onClose={() => setIsOrdersOpen(false)} />
     </Container>
   );

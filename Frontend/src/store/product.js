@@ -1,7 +1,7 @@
 // src/store/product.js
 import { create } from "zustand";
 
-// Automatically switches between localhost for dev and Vercel for production
+// Automatically switches between localhost for dev and render for production
 const API_URL = import.meta.env.VITE_API_URL ||(import.meta.env.MODE === "development" ? "http://localhost:5000" : "https://products-backend-7.onrender.com"); // 👈 Fixed fallback URL
 
 const useProductStore = create((set, get) => ({

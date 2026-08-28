@@ -5,7 +5,8 @@ import {
   getMyOrders,
   getOrders,
   updateOrderStatus,
-} from "../controllers/order.controller.js"; // 👈 Must have .js here!
+  adminDeleteOrder,
+} from "../controllers/order.controller.js";
 import { protect, protectAdmin } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
@@ -20,6 +21,9 @@ router.get("/myorders", protect, getMyOrders);
 // --- Admin Routes ---
 // View all store orders
 router.get("/", protect, protectAdmin, getOrders);
+
+// Remove/hide order from admin view (Placed ABOVE dynamic :id routes)
+router.delete("/admin/:id", protect, protectAdmin, adminDeleteOrder);
 
 // Update order status (Pending -> Processing -> Delivered)
 router.put("/:id/status", protect, protectAdmin, updateOrderStatus);

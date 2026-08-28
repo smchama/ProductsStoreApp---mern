@@ -25,12 +25,11 @@ import {
   Button,
   useToast,
 } from "@chakra-ui/react";
-import { FiSearch } from "react-icons/fi";
+import { FiSearch, FiTrash2 } from "react-icons/fi";
 import useAuthStore from "../store/auth.js";
 
-// ✅ Automatically use live Render backend URL or local fallback
-const API_URL = import.meta.env.VITE_API_URL || "https://products-backend-7.onrender.com";
-
+// ✅ Hardcode localhost directly to bypass any Vite environment caching or .env file conflicts
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 const AdminOrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -38,7 +37,6 @@ const AdminOrdersPage = () => {
   const cardBg = useColorModeValue("white", "gray.800");
   const toast = useToast();
 
-  // ✅ Grab token from Zustand store with a fallback directly to localStorage
   const { token: storeToken } = useAuthStore();
   const token = storeToken || localStorage.getItem("token");
 
@@ -72,7 +70,6 @@ const AdminOrdersPage = () => {
     fetchOrders();
   }, [token]);
 
-  // ✅ Handle cycling or updating the order status
   const handleUpdateStatus = async (orderId, currentStatus) => {
     const nextStatusMap = {
       Pending: "Processing",
@@ -104,7 +101,6 @@ const AdminOrdersPage = () => {
         isClosable: true,
       });
 
-      // Update local state instantly without a full page reload
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
           order._id === orderId ? { ...order, status: newStatus } : order
@@ -113,6 +109,42 @@ const AdminOrdersPage = () => {
     } catch (error) {
       toast({
         title: "Update Failed",
+        description: error.message,
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const handleDeleteOrder = async (orderId) => {
+    if (!window.confirm("Are you sure you want to remove this order from your dashboard? The customer's history will remain intact.")) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_URL}/api/orders/admin/${orderId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to delete order");
+
+      toast({
+        title: "Order Removed 🗑️",
+        description: "Order removed from admin dashboard successfully.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+
+      setOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId));
+    } catch (error) {
+      toast({
+        title: "Deletion Failed",
         description: error.message,
         status: "error",
         duration: 4000,
@@ -190,8 +222,7 @@ const AdminOrdersPage = () => {
                     </Text>
                   </Box>
 
-                  {/* ✅ Interactive Status Badge & Action Button */}
-                  <Stack direction="row" align="center" spacing={3}>
+                  <Stack direction="row" align="center" spacing={3} wrap="wrap">
                     <Badge
                       colorScheme={getStatusColorScheme(order.status)}
                       fontSize="0.9em"
@@ -207,6 +238,15 @@ const AdminOrdersPage = () => {
                       onClick={() => handleUpdateStatus(order._id, order.status || "Pending")}
                     >
                       Advance Status 🔄
+                    </Button>
+                    <Button
+                      size="sm"
+                      colorScheme="red"
+                      variant="solid"
+                      leftIcon={<FiTrash2 />}
+                      onClick={() => handleDeleteOrder(order._id)}
+                    >
+                      Remove Order
                     </Button>
                   </Stack>
                 </Stack>

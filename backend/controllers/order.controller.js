@@ -10,7 +10,6 @@ export const createOrder = async (req, res) => {
   }
 
   try {
-    // Safely extract the user ID regardless of how the token payload encodes it
     const userId = req.user._id || req.user.id || req.user.userId || req.user._doc?._id;
 
     if (!userId) {
@@ -19,7 +18,7 @@ export const createOrder = async (req, res) => {
     }
 
     const newOrder = new Order({
-      user: userId, // Attached by your 'protect' middleware
+      user: userId,
       fullName,
       address,
       city,
@@ -27,6 +26,8 @@ export const createOrder = async (req, res) => {
       items,
       totalAmount,
       status: "Pending",
+      hiddenFromAdmin: false,
+      hiddenFromUser: false,
     });
 
     await newOrder.save();
@@ -42,21 +43,18 @@ export const createOrder = async (req, res) => {
   }
 };
 
-// --- GET LOGGED-IN USER'S ORDERS (WITH LEGACY FALLBACK) ---
+// --- GET LOGGED-IN USER'S ORDERS ---
 export const getMyOrders = async (req, res) => {
   try {
     const userId = req.user._id || req.user.id || req.user.userId || req.user._doc?._id;
     
-    // Fetch orders belonging to this user OR legacy orders with no user field
+    // Fetch orders belonging to this user that are NOT hidden from user.
+    // Cleanly removes the legacy fallback so brand new users start with 0 orders.
     const orders = await Order.find({
-      $or: [
-        { user: userId },
-        { user: { $exists: false } },
-        { user: null }
-      ]
+      user: userId,
+      hiddenFromUser: { $ne: true }
     }).sort({ createdAt: -1 });
 
-    // Normalize so older orders without a status safely default to "Pending"
     const normalizedOrders = orders.map(order => ({
       ...order.toObject(),
       status: order.status || "Pending"
@@ -72,8 +70,9 @@ export const getMyOrders = async (req, res) => {
 // --- GET ALL ORDERS (ADMIN) ---
 export const getOrders = async (req, res) => {
   try {
-    const orders = await Order.find({})
-      .populate("user", "name email") // Optional: pulls user info if needed
+    // Fetch only orders that haven't been removed from the admin dashboard
+    const orders = await Order.find({ hiddenFromAdmin: { $ne: true } })
+      .populate("user", "name email")
       .sort({ createdAt: -1 });
       
     res.status(200).json({ success: true, data: orders });
@@ -85,7 +84,7 @@ export const getOrders = async (req, res) => {
 
 // --- UPDATE ORDER STATUS (ADMIN) ---
 export const updateOrderStatus = async (req, res) => {
-  const { status } = req.body; // Expecting "Pending", "Processing", "Delivered", or "Cancelled"
+  const { status } = req.body;
   
   const validStatuses = ["Pending", "Processing", "Delivered", "Cancelled"];
   if (!validStatuses.includes(status)) {
@@ -109,6 +108,35 @@ export const updateOrderStatus = async (req, res) => {
     });
   } catch (error) {
     console.error("Error updating order status:", error.message);
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
+// --- REMOVE ORDER FROM ADMIN VIEW (ADMIN) ---
+export const adminDeleteOrder = async (req, res) => {
+  try {
+    // Use findByIdAndUpdate to toggle the flag directly without triggering full document Mongoose validation
+    const order = await Order.findByIdAndUpdate(
+      req.params.id,
+      { hiddenFromAdmin: true },
+      { new: true }
+    );
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found." });
+    }
+
+    // If both admin and user have hidden it, perform a hard delete to clean up the DB
+    if (order.hiddenFromUser) {
+      await Order.findByIdAndDelete(req.params.id);
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Order removed from admin dashboard successfully.",
+    });
+  } catch (error) {
+    console.error("Error removing order for admin:", error.message);
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };

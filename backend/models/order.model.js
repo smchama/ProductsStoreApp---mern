@@ -28,6 +28,16 @@ const orderSchema = new mongoose.Schema(
       enum: ["Pending", "Processing", "Delivered", "Cancelled"],
       default: "Pending",
     },
+    // --- Flags for separate history management ---
+    hiddenFromAdmin: {
+      type: Boolean,
+      default: false,
+    },
+    hiddenFromUser: {
+      type: Boolean,
+      default: false,
+    },
+    // ---------------------------------------------
   },
   { timestamps: true }
 );
