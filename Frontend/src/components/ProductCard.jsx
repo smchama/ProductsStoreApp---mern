@@ -239,7 +239,7 @@ const ProductCard = ({ product }) => {
                   <option value="clothing">Clothing</option>
                   <option value="groceries">Groceries</option>
                   <option value="cosmetics">Cosmetics</option>
-                  <option value="footware">Footware</option>
+                  <option value="footwear">Footwear</option>
                   <option value="bags-wallets">Bags-Wallets</option>
                   <option value="home goods">Home Goods</option>
                 </Select>

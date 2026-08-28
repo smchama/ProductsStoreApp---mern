@@ -22,7 +22,7 @@ const productSchema = new mongoose.Schema(
       required: [true, "Please select a category for the product"],
       trim: true,
       // Optional: Restrict to specific values. Feel free to adjust this list.
-      enum: ["Electronics", "Clothing", "Footwear", "Home Goods", "Groceries","Cosmetics", "Watches","Accessories"]
+      //enum: ["Electronics", "Clothing", "Footwear", "Home Goods", "Groceries","Cosmetics", "Watches","Accessories"]
     }
     // ----------------------------
   },
