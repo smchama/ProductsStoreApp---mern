@@ -48,9 +48,11 @@ export const protectAdmin = async (req, res, next) => {
       return next();
     }
 
-    // Fallback: Query database directly using userId from token if role is missing
-    if (req.user && req.user.userId) {
-      const user = await User.findById(req.user.userId);
+    // Fallback: Support multiple common JWT ID field conventions (userId, id, _id)
+    const targetUserId = req.user?.userId || req.user?.id || req.user?._id;
+
+    if (targetUserId) {
+      const user = await User.findById(targetUserId);
       console.log(
         "Found user in DB:",
         user ? { email: user.email, role: user.role } : "User not found"
